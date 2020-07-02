@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orders">
+    <insert id="insert">
+        insert into orders(orderno,price,uid) values(#{orderno},#{price},#{user.id})
+    </insert>
+    <update id="update">
+        update orders set orderno = #{orderno} , price = #{price} ,uid = #{uid} where id = #{id}
+    </update>
+    <!-- findById -->
+    <select id="selectOne" parameterType="int" resultMap="RM_Order">
+      select
+             o.id oid,
+             o.orderno oorderno,
+             o.price oprice,
+             o.uid uid,
+             u.name uname,
+             u.age uage,
+             i.id iid,
+             i.itemname iitemname
+      from orders o
+             left outer join users u on o.uid = u.id
+             left outer join items i on o.id = i.oid
+      where o.id = #{id}
+    </select>
+    <!-- findAll -->
+    <select id="selectAll" resultMap="RM_Order">
+      select
+             o.id oid,
+             o.orderno oorderno,
+             o.price oprice,
+             o.uid uid,
+             u.name uname,
+             u.age uage,
+             i.id iid,
+             i.itemname iitemname
+      from orders o
+             left outer join users u on o.uid = u.id
+             left outer join items i on o.id = i.oid
+    </select>
+
+    <resultMap id="RM_Order" type="com.ssmDemo.domain.Order">
+        <id property="id" column="oid"/>
+        <result property="orderno" column="oorderno"/>
+        <result property="price" column="oprice"/>
+        <association property="user" javaType="com.ssmDemo.domain.User">
+            <id property="id" column="uid"/>
+            <result property="name" column="uname"/>
+            <result property="age" column="uage"/>
+        </association>
+        <collection property="items" ofType="com.ssmDemo.domain.Item">
+            <id property="id" column="iid"/>
+            <result property="itemname" column="iitemname"/>
+        </collection>
+    </resultMap>
+</mapper>
